@@ -1,0 +1,11 @@
+﻿# Data files
+data/raw/
+data/processed/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
