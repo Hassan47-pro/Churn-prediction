@@ -9,3 +9,6 @@ data/processed/
 venv/
 __pycache__/
 *.pyc
+
+# Model artifacts
+models/*.pkl
