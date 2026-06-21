@@ -17,9 +17,9 @@ IBM Telco Customer Churn dataset: 7,043 customers, 21 features including contrac
 
 | Model | ROC-AUC | Precision | Recall | F1 |
 |---|---|---|---|---|
-| Logistic Regression | 0.843 | 0.67 | 0.58 | 0.62 |
-| Random Forest | 0.861 | 0.71 | 0.61 | 0.66 |
-| Gradient Boosting | 0.874 | 0.73 | 0.63 | 0.68 |
+| Logistic Regression | 0.828 |0.53  |0.70  |0.60 |
+| Random Forest | 0.822 | 0.55 | 0.58 | 0.57 |
+| Gradient Boosting | 0.833 | 0.53 | 0.68 | 0.59 |
 
 **Best model**: Gradient Boosting — highest ROC-AUC and best precision/recall balance for the retention use case.
 
