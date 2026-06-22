@@ -17,11 +17,25 @@ IBM Telco Customer Churn dataset: 7,043 customers, 21 features including contrac
 
 | Model | ROC-AUC | Precision | Recall | F1 |
 |---|---|---|---|---|
-| Logistic Regression | 0.843 | 0.67 | 0.58 | 0.62 |
-| Random Forest | 0.861 | 0.71 | 0.61 | 0.66 |
-| Gradient Boosting | 0.874 | 0.73 | 0.63 | 0.68 |
+| Logistic Regression | 0.828 |0.53  |0.70  |0.60 |
+| Random Forest | 0.822 | 0.55 | 0.58 | 0.57 |
+| Gradient Boosting | 0.833 | 0.53 | 0.68 | 0.59 |
 
 **Best model**: Gradient Boosting — highest ROC-AUC and best precision/recall balance for the retention use case.
+
+
+## Interpretability
+
+Using SHAP values on the Gradient Boosting model, the top 5 drivers of churn are:
+
+1. **Month-to-month contract** — customers without long-term contracts churn at much higher rates
+2. **Tenure** — newer customers are significantly more likely to leave
+3. **High monthly charges** — customers paying more are at greater risk
+4. **No premium support** — customers without OnlineSecurity or TechSupport churn more
+5. **Fiber optic internet** — fiber customers show elevated churn vs. DSL
+
+![Churn Risk Scorecard](reports/figures/churn_risk_scorecard.png)
+
 
 ## Project Structure
 ```
