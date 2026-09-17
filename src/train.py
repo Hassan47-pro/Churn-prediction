@@ -4,6 +4,7 @@ import json
 import joblib
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
+from src.model_identity import compute_model_id, _library_versions
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 from src.preprocessing import preprocess_data
@@ -18,6 +19,28 @@ CONFIG = {
     'n_estimators': 100,
     'random_state': 42,
 }
+
+
+PUBLISHED_METRICS = {
+    'roc_auc': 0.833,
+    'precision': 0.53,
+    'recall': 0.68,
+    'f1': 0.59,
+}
+TOLERANCE = 0.01
+
+def check_against_published(metrics):
+    mismatches = []
+    for key, published in PUBLISHED_METRICS.items():
+        actual = metrics[key]
+        if abs(actual - published) > TOLERANCE:
+            mismatches.append(f"{key}: got {actual:.4f}, expected {published} (tolerance {TOLERANCE})")
+    if mismatches:
+        raise AssertionError(
+            "Rebuilt model does not match published metrics:\n" + "\n".join(mismatches)
+        )
+    print("✓ Metrics match published results within tolerance.")
+
 
 def main():
     df = pd.read_csv(RAW_DATA_PATH)
@@ -34,6 +57,9 @@ def main():
     for k, v in metrics.items():
         print(f"  {k}: {v}")
 
+    check_against_published(metrics)
+
+
     code_paths = ['src/preprocessing.py', 'src/evaluation.py', 'src/train.py']
     model_id = compute_model_id(RAW_DATA_PATH, code_paths, CONFIG)
 
@@ -47,6 +73,7 @@ def main():
         'config': CONFIG,
         'features': feature_names,
         'metrics': metrics,
+        'library_versions': _library_versions(),
     }
     with open(os.path.join(model_dir, 'metadata.json'), 'w') as f:
         json.dump(metadata, f, indent=2)
@@ -56,3 +83,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+

@@ -64,6 +64,6 @@ data or code produces a different one.
 
 ```python
 from src.model_identity import load_model
-model, metadata = load_model("churn-7c3b6a05fa6e")
+model, metadata = load_model("<your_model_id>")
 ```
 ```
