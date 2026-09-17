@@ -1,5 +1,4 @@
 ﻿# Data files
-data/raw/
 data/processed/
 
 # Jupyter checkpoints
@@ -11,4 +10,5 @@ __pycache__/
 *.pyc
 
 # Model artifacts
-models/*.pkl
+models/*
+!models/.gitkeep
