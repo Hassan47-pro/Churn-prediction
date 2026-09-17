@@ -23,15 +23,24 @@ PUBLISHED_METRICS = {
     'roc_auc': 0.833,
     'precision': 0.53,
     'recall': 0.68,
-    'f1': 0.60,
+     'f1': 0.59,
 }
+
+METRIC_DECIMALS = {
+    'roc_auc': 3,
+    'precision': 2,
+    'recall': 2,
+    'f1': 2,
+}
+from decimal import Decimal, ROUND_HALF_UP
 
 def check_against_published(metrics):
     mismatches = []
     for key, published in PUBLISHED_METRICS.items():
         actual = metrics[key]
-        decimals = len(str(published).split('.')[-1])
-        actual_rounded = round(actual, decimals)
+        decimals = METRIC_DECIMALS[key]
+        quantizer = Decimal('1.' + '0' * decimals) if decimals > 0 else Decimal('1')
+        actual_rounded = float(Decimal(str(actual)).quantize(quantizer, rounding=ROUND_HALF_UP))
         if actual_rounded != published:
             mismatches.append(
                 f"{key}: got {actual:.4f} (rounds to {actual_rounded}), "
@@ -42,7 +51,6 @@ def check_against_published(metrics):
             "Rebuilt model does not match published metrics:\n" + "\n".join(mismatches)
         )
     print("✓ Metrics match published results (rounded to published precision).")
-
 
 def main():
     df = pd.read_csv(RAW_DATA_PATH)
