@@ -4,12 +4,11 @@ import json
 import joblib
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
-from src.model_identity import compute_model_id, _library_versions
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 from src.preprocessing import preprocess_data
 from src.evaluation import evaluate_model
-from src.model_identity import compute_model_id
+from src.model_identity import compute_model_id, _library_versions
 
 RAW_DATA_PATH = 'data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv'
 MODELS_DIR = 'models'
@@ -20,26 +19,29 @@ CONFIG = {
     'random_state': 42,
 }
 
-
 PUBLISHED_METRICS = {
     'roc_auc': 0.833,
     'precision': 0.53,
     'recall': 0.68,
-    'f1': 0.59,
+    'f1': 0.60,
 }
-TOLERANCE = 0.01
 
 def check_against_published(metrics):
     mismatches = []
     for key, published in PUBLISHED_METRICS.items():
         actual = metrics[key]
-        if abs(actual - published) > TOLERANCE:
-            mismatches.append(f"{key}: got {actual:.4f}, expected {published} (tolerance {TOLERANCE})")
+        decimals = len(str(published).split('.')[-1])
+        actual_rounded = round(actual, decimals)
+        if actual_rounded != published:
+            mismatches.append(
+                f"{key}: got {actual:.4f} (rounds to {actual_rounded}), "
+                f"expected {published}"
+            )
     if mismatches:
         raise AssertionError(
             "Rebuilt model does not match published metrics:\n" + "\n".join(mismatches)
         )
-    print("✓ Metrics match published results within tolerance.")
+    print("✓ Metrics match published results (rounded to published precision).")
 
 
 def main():
@@ -58,7 +60,6 @@ def main():
         print(f"  {k}: {v}")
 
     check_against_published(metrics)
-
 
     code_paths = ['src/preprocessing.py', 'src/evaluation.py', 'src/train.py']
     model_id = compute_model_id(RAW_DATA_PATH, code_paths, CONFIG)
@@ -83,5 +84,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-

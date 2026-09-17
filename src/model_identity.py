@@ -5,8 +5,9 @@ import importlib.metadata
 def _hash_file(path):
     h = hashlib.sha256()
     with open(path, 'rb') as f:
-        for chunk in iter(lambda: f.read(8192), b''):
-            h.update(chunk)
+        content = f.read()
+    normalized = content.replace(b'\r\n', b'\n').replace(b'\r', b'\n')
+    h.update(normalized)
     return h.hexdigest()
 
 
