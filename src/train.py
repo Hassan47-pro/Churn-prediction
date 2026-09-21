@@ -19,12 +19,8 @@ CONFIG = {
     'random_state': 42,
 }
 
-PUBLISHED_METRICS = {
-    'roc_auc': 0.833,
-    'precision': 0.53,
-    'recall': 0.68,
-     'f1': 0.59,
-}
+import json
+from decimal import Decimal, ROUND_HALF_UP
 
 METRIC_DECIMALS = {
     'roc_auc': 3,
@@ -32,7 +28,19 @@ METRIC_DECIMALS = {
     'recall': 2,
     'f1': 2,
 }
-from decimal import Decimal, ROUND_HALF_UP
+
+def _quantize(value, decimals):
+    quantizer = Decimal('1.' + '0' * decimals)
+    return float(Decimal(str(value)).quantize(quantizer, rounding=ROUND_HALF_UP))
+
+with open('reports/notebook03_recorded_metrics.json') as f:
+    _recorded = json.load(f)
+
+PUBLISHED_METRICS = {
+    key: _quantize(value, METRIC_DECIMALS[key])
+    for key, value in _recorded.items()
+    if key in METRIC_DECIMALS
+}
 
 def check_against_published(metrics):
     mismatches = []
