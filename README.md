@@ -17,9 +17,11 @@ IBM Telco Customer Churn dataset: 7,043 customers, 21 features including contrac
 
 | Model | ROC-AUC | Precision | Recall | F1 |
 |---|---|---|---|---|
-| Logistic Regression | 0.828 |0.53  |0.70  |0.60 |
-| Random Forest | 0.822 | 0.55 | 0.58 | 0.57 |
-| Gradient Boosting | 0.833 | 0.53 | 0.68 | 0.59 |
+| Logistic Regression | 0.829 | 0.53 | 0.71 | 0.61 |
+| Random Forest      | 0.822 | 0.56 | 0.59 | 0.57 |
+| Gradient Boosting  | 0.833 | 0.53 | 0.68 | 0.60 |
+
+*Note: F1 corrected from 0.59 to 0.60 — a transcription error against notebook03_modeling.ipynb's own recorded output, confirmed by Adaeze. The automated metrics gate in src/train.py verifies the rebuild against this notebook directly.*
 
 **Best model**: Gradient Boosting — highest ROC-AUC and best precision/recall balance for the retention use case.
 
@@ -40,15 +42,33 @@ Using SHAP values on the Gradient Boosting model, the top 5 drivers of churn are
 ## Project Structure
 ```
 data/         # Raw and processed datasets
-notebooks/    # 01_eda, 02_feature_engineering, 03_modeling
-src/          # preprocessing.py, evaluation.py
-models/       # Saved best model
-reports/      # Figures and outputs
+notebooks/    # 01_eda, 02_feature_engineering, 03_modeling (exploration only),04_shap_explainabillity
+src/          # preprocessing.py, evaluation.py, train.py, model_identity.py
+models/       # Saved models, one folder per identity (gitignored)
 ```
 
 ## Reproduce
 ```bash
 pip install -r requirements.txt
-jupyter notebook
+python -m src.train
 ```
+
+This runs the full pipeline end to end: loads the raw data, preprocesses it,
+trains the Gradient Boosting model, evaluates it against the held-out test set,
+and saves the result under `models/<model_id>/` with its metadata (`model.pkl` + `metadata.json`).
+
+## Model Identity
+Each trained model gets a unique identity derived from a hash of the raw data,
+the training/preprocessing source code, the training configuration, and the
+installed versions of the libraries used to train it (scikit-learn,
+imbalanced-learn, pandas, numpy). Rebuilding with unchanged inputs reproduces
+the same model ID; changing any of these produces a different one.
+
+```python
+from src.model_identity import load_model
+
+# After running `python -m src.train`, use the model ID printed to stdout
+# (also the folder name under models/):
+model, metadata = load_model("<your_model_id>")
 ```
+
