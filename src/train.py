@@ -19,7 +19,6 @@ CONFIG = {
     'random_state': 42,
 }
 
-import json
 from decimal import Decimal, ROUND_HALF_UP
 
 METRIC_DECIMALS = {
@@ -33,8 +32,32 @@ def _quantize(value, decimals):
     quantizer = Decimal('1.' + '0' * decimals)
     return float(Decimal(str(value)).quantize(quantizer, rounding=ROUND_HALF_UP))
 
-with open('reports/notebook03_recorded_metrics.json') as f:
-    _recorded = json.load(f)
+def _load_notebook_metrics(notebook_path, model_name='Gradient Boosting'):
+    with open(notebook_path, encoding='utf-8') as f:
+        nb = json.load(f)
+    for cell in nb['cells']:
+        for out in cell.get('outputs', []):
+            text = ''.join(out.get('text', []))
+            if model_name in text and 'roc_auc' in text:
+                for line in text.splitlines():
+                    if line.strip().startswith(model_name):
+                        nums = []
+                        for token in line.split():
+                            try:
+                                nums.append(float(token))
+                            except ValueError:
+                                pass
+                        if len(nums) >= 4:
+                            roc_auc, precision, recall, f1 = nums[:4]
+                            return {
+                                'roc_auc': roc_auc,
+                                'precision': precision,
+                                'recall': recall,
+                                'f1': f1,
+                            }
+    raise ValueError(f"Could not find recorded metrics for {model_name} in {notebook_path}")
+
+_recorded = _load_notebook_metrics('notebooks/notebook03_modeling.ipynb')
 
 PUBLISHED_METRICS = {
     key: _quantize(value, METRIC_DECIMALS[key])
