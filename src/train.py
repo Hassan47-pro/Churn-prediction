@@ -10,8 +10,9 @@ from src.preprocessing import preprocess_data
 from src.evaluation import evaluate_model
 from src.model_identity import compute_model_id, _library_versions
 
-RAW_DATA_PATH = 'data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv'
-MODELS_DIR = 'models'
+_PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__) + '/..')
+RAW_DATA_PATH = os.path.join(_PROJECT_ROOT, 'data', 'raw', 'WA_Fn-UseC_-Telco-Customer-Churn.csv')
+MODELS_DIR = os.path.join(_PROJECT_ROOT, 'models')
 
 CONFIG = {
     'model_type': 'GradientBoostingClassifier',
@@ -56,8 +57,9 @@ def _load_notebook_metrics(notebook_path, model_name='Gradient Boosting'):
                                 'f1': f1,
                             }
     raise ValueError(f"Could not find recorded metrics for {model_name} in {notebook_path}")
+    
 
-_recorded = _load_notebook_metrics('notebooks/notebook03_modeling.ipynb')
+_recorded = _load_notebook_metrics(os.path.join(_PROJECT_ROOT, 'notebooks', 'notebook03_modeling.ipynb'))
 
 PUBLISHED_METRICS = {
     key: _quantize(value, METRIC_DECIMALS[key])
@@ -100,7 +102,11 @@ def main():
 
     check_against_published(metrics)
 
-    code_paths = ['src/preprocessing.py', 'src/evaluation.py', 'src/train.py']
+    code_paths = code_paths = [
+    os.path.join(_PROJECT_ROOT, 'src', 'preprocessing.py'),
+    os.path.join(_PROJECT_ROOT, 'src', 'evaluation.py'),
+    os.path.join(_PROJECT_ROOT, 'src', 'train.py'),
+]
     model_id = compute_model_id(RAW_DATA_PATH, code_paths, CONFIG)
 
     model_dir = os.path.join(MODELS_DIR, model_id)
