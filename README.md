@@ -17,9 +17,9 @@ IBM Telco Customer Churn dataset: 7,043 customers, 21 features including contrac
 
 | Model | ROC-AUC | Precision | Recall | F1 |
 |---|---|---|---|---|
-| Logistic Regression | 0.829 | 0.53 | 0.70 | 0.60 |
-| Random Forest | 0.822 | 0.55 | 0.59 | 0.57 |
-| Gradient Boosting | 0.833 | 0.53 | 0.68 | 0.60 |
+| Logistic Regression | 0.829 | 0.53 | 0.71 | 0.61 |
+| Random Forest      | 0.822 | 0.56 | 0.59 | 0.57 |
+| Gradient Boosting  | 0.833 | 0.53 | 0.68 | 0.60 |
 
 *Note: F1 corrected from 0.59 to 0.60 — a transcription error against notebook03_modeling.ipynb's own recorded output, confirmed by Adaeze. The automated metrics gate in src/train.py verifies the rebuild against this notebook directly.*
 
