@@ -102,11 +102,8 @@ def main():
 
     check_against_published(metrics)
 
-    code_paths = code_paths = [
-    os.path.join(_PROJECT_ROOT, 'src', 'preprocessing.py'),
-    os.path.join(_PROJECT_ROOT, 'src', 'evaluation.py'),
-    os.path.join(_PROJECT_ROOT, 'src', 'train.py'),
-]
+    code_paths =  ['src/preprocessing.py', 'src/evaluation.py', 'src/train.py']
+    
     model_id = compute_model_id(RAW_DATA_PATH, code_paths, CONFIG)
 
     model_dir = os.path.join(MODELS_DIR, model_id)

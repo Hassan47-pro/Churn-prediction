@@ -17,8 +17,8 @@ IBM Telco Customer Churn dataset: 7,043 customers, 21 features including contrac
 
 | Model | ROC-AUC | Precision | Recall | F1 |
 |---|---|---|---|---|
-| Logistic Regression | 0.828 |0.53  |0.70  |0.60 |
-| Random Forest | 0.822 | 0.55 | 0.58 | 0.57 |
+| Logistic Regression | 0.829 | 0.53 | 0.70 | 0.60 |
+| Random Forest | 0.822 | 0.55 | 0.59 | 0.57 |
 | Gradient Boosting | 0.833 | 0.53 | 0.68 | 0.60 |
 
 *Note: F1 corrected from 0.59 to 0.60 — a transcription error against notebook03_modeling.ipynb's own recorded output, confirmed by Adaeze. The automated metrics gate in src/train.py verifies the rebuild against this notebook directly.*
@@ -59,10 +59,10 @@ and saves the result under `models/<model_id>/` with its metadata (`model.pkl` +
 
 ## Model Identity
 Each trained model gets a unique identity derived from a hash of the raw data,
-the training/preprocessing source code, and the training configuration.
-Rebuilding with unchanged inputs reproduces the same model ID; changing the
-data or code produces a different one.
-
+the training/preprocessing source code, the training configuration, and the
+installed versions of the libraries used to train it (scikit-learn,
+imbalanced-learn, pandas, numpy). Rebuilding with unchanged inputs reproduces
+the same model ID; changing any of these produces a different one.
 
 ```python
 from src.model_identity import load_model
